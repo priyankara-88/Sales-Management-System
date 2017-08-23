@@ -1,0 +1,180 @@
+﻿
+@{ 
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+    <link href="~/Styles/sales-resp.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <h2>Sales Representatives</h2>
+        <table id="sales-persons-tble">
+            <tr>
+                <th id="select-col">Select</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Age</th>
+                <th>Salary</th>
+                <th>Is Married</th>
+                <th>Is Active<span><input id="check-all" type="checkbox" name="checkAll" />All</span></th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="space-dives"></div>
+    <div>
+        <table id="sales-person-details-tble">
+            <tr>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td id="details-tble-tr">
+                    <table style="border: hidden; border: 1px;">
+                        <tr>
+                            <td> First Name </td>
+                            <td> <input type="text" name="firstName"/></td>
+                        </tr>
+                        <tr>
+                            <td> Last Name </td>
+                            <td> <input type="text" name="lastName" /></td>
+                        </tr>
+                        <tr>
+                            <td> Date of Birth </td>
+                            <td> <input type="date" name="DOB" /></td>
+                        </tr>
+                        <tr>
+                            <td> Salary </td>
+                            <td> <input type="number" step="0.01" name="salary" /></td>
+                        </tr>
+                        <tr>
+                            <td> Is Married </td>
+                            <td><input type="radio" name="married" value="yes"/>Yes<span> &nbsp;</span><input type="radio" name="married" value="no"/>No</td>
+                        </tr>
+                        <tr>
+                            <td> Category</td>
+                            <td>
+                                <select id="option-sales-person-category">
+                                    <option value="">-Select-</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><button name="new">New</button> <button name="delete">Delete</button> <button name="save">Save</button> <button name="cancel">Cancel</button></td>
+                        </tr>
+                    </table>
+                    <div class="space-dives"></div>
+                    <div class="left-align"><u>Sales Details</u></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function () {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AllSalesPersonDetails", "Home")',
+                dataType: 'json',
+                success: function (data) {
+                    fillSalesPersonsData(data);
+                },
+                error:
+                    function (data) {
+                        alert('Error');
+                    }
+            });
+
+            $.post('@Url.Action("SalesPersonCategories", "Home")', function (data) {
+                showSalesPersonCategoriesOptions(data);
+            }, 'json').fail(function (jqxhr, textStatus, error) {
+                alert(error);
+            });
+
+            var checkAll = $('#check-all');
+            checkAll.click(function () {
+                setActiveAll((checkAll).is(':checked'));
+            });
+        });
+
+        function fillSalesPersonsData(data)
+        {
+            var tagetTabel = $('#sales-persons-tble');
+            $.each(data, function (index, element) {
+                tagetTabel.append(
+                    "<tr>"
+                        + "<td><button class='select-person-btn' id='" + element.ID + "'>Select</button></td>"
+                        + "<td>" + element.FullName + "</td>"
+                        + "<td>" + element.Description + "</td>"
+                        + "<td>" + element.Age + "</td>"
+                        + "<td>" + element.Salary + "</td>"
+                        + "<td>" + element.MaritalStatus + "</td>"
+                        + "<td><input class='checkActive' type='checkbox' name='checkActive' " + element.CheckStatus + "/></td>"
+                    + "</tr>");
+            });
+            enableFunctionalOnSelection();
+        }
+
+        function enableFunctionalOnSelection()
+        {
+            var allSelectButtons = $('.select-person-btn');
+            $.each(allSelectButtons, function (indx, elemnt)
+            {
+                $(elemnt).click(function () {
+                    getSelectedPersonDetails(elemnt.id);
+                });
+            });
+        }
+
+        function getSelectedPersonDetails(salesPersonId)
+        {
+            $.post('@Url.Action("SalesPersonDetails","Home")', { id: salesPersonId }, function (data) {
+                showSalesPersonDetails(data);
+            },'json').fail(function (error) {
+                alert('Failed');
+            });
+        }
+
+        function showSalesPersonDetails(data)
+        {
+            $.each(data, function (indx, elemnt) {
+                $('#details-tble-tr [name="firstName"]').val(elemnt.FirstName);
+                $('#details-tble-tr [name="lastName"]').val(elemnt.LastName);
+
+                var dob = new Date(elemnt.DateOfBirth);
+                var day = ("0" + dob.getDate()).slice(-2);
+                var month = ("0" + (dob.getMonth() + 1)).slice(-2);           
+                var dobFormatted = dob.getFullYear() + "-" + (month) + "-" + (day);
+                $('#details-tble-tr [name="DOB"]').val(dobFormatted);
+
+                $('#details-tble-tr [name="salary"]').val(elemnt.Salary);
+
+                var isMarried = $('#details-tble-tr [name="married"]');
+                isMarried.filter('[value="yes"]').prop('checked', elemnt.IsMarried);
+                isMarried.filter('[value="no"]').prop('checked', !elemnt.IsMarried);
+
+                $('#option-sales-person-category').val(elemnt.SalesPersonCategoryID);
+            });
+        }
+
+        function showSalesPersonCategoriesOptions(categoriesData)
+        {
+            var personCategoryOptions = $('#option-sales-person-category');
+            $.each(categoriesData, function (indx, elemnt) {
+                personCategoryOptions.append("<option value='" + elemnt.ID + "'>" + elemnt.Description + "</option>")
+            });
+        }
+
+        function setActiveAll(checkValue)
+        {
+            $('.checkActive').prop('checked', checkValue);
+        }
+    </script>
+</body>
+</html>

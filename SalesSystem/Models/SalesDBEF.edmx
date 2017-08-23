@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SalesDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="SalesPerson">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SalesPersonCategoryID" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="20" />
+          <Property Name="LastName" Type="varchar" MaxLength="20" />
+          <Property Name="DateOfBirth" Type="date" />
+          <Property Name="Salary" Type="money" />
+          <Property Name="IsMarried" Type="bit" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="SalesPersonCategory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="SalesProduct">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductID" Type="int" Nullable="false" />
+          <Property Name="SalesPersonID" Type="int" Nullable="false" />
+          <Property Name="TransactionDate" Type="date" />
+          <Property Name="Price" Type="int" />
+          <Property Name="UnitsSold" Type="int" />
+        </EntityType>
+        <Association Name="FK_SalesPerson_SalesPerson">
+          <End Role="SalesPersonCategory" Type="Self.SalesPersonCategory" Multiplicity="1" />
+          <End Role="SalesPerson" Type="Self.SalesPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SalesPersonCategory">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesPerson">
+              <PropertyRef Name="SalesPersonCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SalesProduct_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="SalesProduct" Type="Self.SalesProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesProduct">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SalesProduct_SalesPerson">
+          <End Role="SalesPerson" Type="Self.SalesPerson" Multiplicity="1" />
+          <End Role="SalesProduct" Type="Self.SalesProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SalesPerson">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesProduct">
+              <PropertyRef Name="SalesPersonID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SP_GetAllSalesPersonDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="SalesDBModelStoreContainer">
+          <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SalesPerson" EntityType="Self.SalesPerson" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SalesPersonCategory" EntityType="Self.SalesPersonCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SalesProduct" EntityType="Self.SalesProduct" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_SalesPerson_SalesPerson" Association="Self.FK_SalesPerson_SalesPerson">
+            <End Role="SalesPersonCategory" EntitySet="SalesPersonCategory" />
+            <End Role="SalesPerson" EntitySet="SalesPerson" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SalesProduct_Product" Association="Self.FK_SalesProduct_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="SalesProduct" EntitySet="SalesProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SalesProduct_SalesPerson" Association="Self.FK_SalesProduct_SalesPerson">
+            <End Role="SalesPerson" EntitySet="SalesPerson" />
+            <End Role="SalesProduct" EntitySet="SalesProduct" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SalesDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SalesProducts" Relationship="Self.FK_SalesProduct_Product" FromRole="Product" ToRole="SalesProduct" />
+        </EntityType>
+        <EntityType Name="SalesPerson">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SalesPersonCategoryID" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <Property Name="Salary" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="IsMarried" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="SalesPersonCategory" Relationship="Self.FK_SalesPerson_SalesPerson" FromRole="SalesPerson" ToRole="SalesPersonCategory" />
+          <NavigationProperty Name="SalesProducts" Relationship="Self.FK_SalesProduct_SalesPerson" FromRole="SalesPerson" ToRole="SalesProduct" />
+        </EntityType>
+        <EntityType Name="SalesPersonCategory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SalesPersons" Relationship="Self.FK_SalesPerson_SalesPerson" FromRole="SalesPersonCategory" ToRole="SalesPerson" />
+        </EntityType>
+        <EntityType Name="SalesProduct">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductID" Type="Int32" Nullable="false" />
+          <Property Name="SalesPersonID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionDate" Type="DateTime" Precision="0" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="UnitsSold" Type="Int32" />
+          <NavigationProperty Name="Product" Relationship="Self.FK_SalesProduct_Product" FromRole="SalesProduct" ToRole="Product" />
+          <NavigationProperty Name="SalesPerson" Relationship="Self.FK_SalesProduct_SalesPerson" FromRole="SalesProduct" ToRole="SalesPerson" />
+        </EntityType>
+        <Association Name="FK_SalesProduct_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="SalesProduct" Type="Self.SalesProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesProduct">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SalesPerson_SalesPerson">
+          <End Role="SalesPersonCategory" Type="Self.SalesPersonCategory" Multiplicity="1" />
+          <End Role="SalesPerson" Type="Self.SalesPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SalesPersonCategory">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesPerson">
+              <PropertyRef Name="SalesPersonCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SalesProduct_SalesPerson">
+          <End Role="SalesPerson" Type="Self.SalesPerson" Multiplicity="1" />
+          <End Role="SalesProduct" Type="Self.SalesProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SalesPerson">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SalesProduct">
+              <PropertyRef Name="SalesPersonID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SalesDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Products" EntityType="Self.Product" />
+          <EntitySet Name="SalesPersons" EntityType="Self.SalesPerson" />
+          <EntitySet Name="SalesPersonCategories" EntityType="Self.SalesPersonCategory" />
+          <EntitySet Name="SalesProducts" EntityType="Self.SalesProduct" />
+          <AssociationSet Name="FK_SalesProduct_Product" Association="Self.FK_SalesProduct_Product">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="SalesProduct" EntitySet="SalesProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SalesPerson_SalesPerson" Association="Self.FK_SalesPerson_SalesPerson">
+            <End Role="SalesPersonCategory" EntitySet="SalesPersonCategories" />
+            <End Role="SalesPerson" EntitySet="SalesPersons" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SalesProduct_SalesPerson" Association="Self.FK_SalesProduct_SalesPerson">
+            <End Role="SalesPerson" EntitySet="SalesPersons" />
+            <End Role="SalesProduct" EntitySet="SalesProducts" />
+          </AssociationSet>
+          <FunctionImport Name="SP_GetAllSalesPersonDetails" ReturnType="Collection(SalesDBModel.SP_GetAllSalesPersonDetails_Result)" />
+        </EntityContainer>
+        <ComplexType Name="SP_GetAllSalesPersonDetails_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="FullName" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="SalesPersonCategoryID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="Age" Nullable="true" />
+          <Property Type="Decimal" Name="Salary" Nullable="true" Precision="19" />
+          <Property Type="Boolean" Name="IsMarried" Nullable="true" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+          <Property Type="String" Name="MaritalStatus" Nullable="false" MaxLength="3" />
+          <Property Type="String" Name="CheckStatus" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="FirstName" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="LastName" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="DateOfBirth" Nullable="true" MaxLength="30" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SalesDBModelStoreContainer" CdmEntityContainer="SalesDBEntities">
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="SalesDBModel.Product">
+              <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesPersons">
+            <EntityTypeMapping TypeName="SalesDBModel.SalesPerson">
+              <MappingFragment StoreEntitySet="SalesPerson">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SalesPersonCategoryID" ColumnName="SalesPersonCategoryID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="IsMarried" ColumnName="IsMarried" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesPersonCategories">
+            <EntityTypeMapping TypeName="SalesDBModel.SalesPersonCategory">
+              <MappingFragment StoreEntitySet="SalesPersonCategory">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesProducts">
+            <EntityTypeMapping TypeName="SalesDBModel.SalesProduct">
+              <MappingFragment StoreEntitySet="SalesProduct">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="SalesPersonID" ColumnName="SalesPersonID" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="UnitsSold" ColumnName="UnitsSold" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_GetAllSalesPersonDetails" FunctionName="SalesDBModel.Store.SP_GetAllSalesPersonDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SalesDBModel.SP_GetAllSalesPersonDetails_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="SalesPersonCategoryID" ColumnName="SalesPersonCategoryID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="IsMarried" ColumnName="IsMarried" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="MaritalStatus" ColumnName="MaritalStatus" />
+                <ScalarProperty Name="CheckStatus" ColumnName="CheckStatus" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
