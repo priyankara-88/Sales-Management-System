@@ -6,3 +6,4 @@ SalesSystem/obj
 SalesSystem.Tests/bin
 SalesSystem.Tests/obj
 SalesSystem/obj
+*.user
