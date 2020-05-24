@@ -1,0 +1,7 @@
+﻿.vs
+SalesSystem/bin
+SalesSystem/obj
+*.csproj.user
+*.user
+SalesSystem.Tests/bin
+SalesSystem.Tests/obj
